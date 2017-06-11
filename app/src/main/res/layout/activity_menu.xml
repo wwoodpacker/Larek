@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorAccent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorText"
+        android:layout_margin="20dp"
+        android:layout_above="@+id/btn_client"
+        android:id="@+id/btn_larek"
+        android:text="Ларек"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorText"
+        android:layout_margin="20dp"
+        android:id="@+id/btn_client"
+        android:text="Клиенты"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorText"
+        android:layout_margin="20dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/btn_report"
+        android:text="Отчеты"
+        android:layout_below="@+id/btn_client"
+        />
+</RelativeLayout>
