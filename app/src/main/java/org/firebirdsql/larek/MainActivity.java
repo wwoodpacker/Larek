@@ -28,9 +28,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity implements AsyncResponse{
-    public static final String usersArraybaseURL = "jdbc:firebirdsql:185.59.141.162/3050:i:\\#DB#\\larek.fdb";
-    public static final String login       = "ANDROID_LAREK";
-    public static final String password    = "SBVU3*()#M|SBJ89s84ur<W($m-2-2";
     public ArrayList<String> usersAndPass;
     public boolean isFirstSelection=false;
     public int spinnerPos=0;
@@ -43,6 +40,12 @@ public class MainActivity extends Activity implements AsyncResponse{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Database variebles
+        GlobalVariables.getInstance().setUsersArraybaseURL("jdbc:firebirdsql:185.59.141.162/3050:i:\\#DB#\\larek.fdb");
+        GlobalVariables.getInstance().setLogin("ANDROID_LAREK");
+        GlobalVariables.getInstance().setPassword("SBVU3*()#M|SBJ89s84ur<W($m-2-2");
+        GlobalVariables.getInstance().setDriverName("org.firebirdsql.jdbc.FBDriver");
+        //Login
         spinner = (Spinner) findViewById(R.id.spinner);
         signInpass = (EditText)findViewById(R.id.editPass);
         btnSignIn=(Button)findViewById(R.id.btn_sign_in);
@@ -54,10 +57,13 @@ public class MainActivity extends Activity implements AsyncResponse{
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                GlobalVariables.getInstance().setName(usersArray[spinnerPos]);
                 String tmp_pass=md5(signInpass.getText().toString());
                 if (tmp_pass.equals(passArray[spinnerPos])){
-                    startActivity(new Intent(MainActivity.this,MenuActivity.class));
+                    Intent intent=new Intent(MainActivity.this,MenuActivity.class);
+                    intent.putExtra("name",usersArray[spinnerPos]);
+                    startActivity(intent);
+                    //finish();
                 }else {
                     Toast.makeText(MainActivity.this,"Wrong password",Toast.LENGTH_LONG).show();
                 }
@@ -124,14 +130,19 @@ public class MainActivity extends Activity implements AsyncResponse{
         return "";
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     class FirstConnectDB extends AsyncTask<Void,Void,ArrayList<String>>{
         ProgressDialog pd;
-        MainActivity mainActivity;
+        Context context;
         ArrayList<String> result;
         public AsyncResponse delegate = null;
 
-        public FirstConnectDB(MainActivity _mainActivity){
-            mainActivity=_mainActivity;
+        public FirstConnectDB(Context _context){
+            context=_context;
         }
 
         @Override
@@ -146,10 +157,11 @@ public class MainActivity extends Activity implements AsyncResponse{
                 //aktivate logging over adb (optional)
                 System.setProperty("FBAdbLog", "true");
                 //register Driver
-                Class.forName("org.firebirdsql.jdbc.FBDriver");
+                Class.forName(GlobalVariables.getInstance().getDriverName());
                 //Get connection
-                String sCon = usersArraybaseURL;
-                Connection con = DriverManager.getConnection(sCon, login, password);
+                String sCon = GlobalVariables.getInstance().getUsersArraybaseURL();
+                Connection con = DriverManager.getConnection(sCon, GlobalVariables.getInstance().getLogin(),
+                                                                    GlobalVariables.getInstance().getPassword());
                 //Query (get Table Count)
                 String sSql = "SELECT \"Name\",\"Password\" FROM \"Larek_authorization_list\"";
                 Statement stmt = con.createStatement();
@@ -188,9 +200,10 @@ public class MainActivity extends Activity implements AsyncResponse{
 
         protected void onPreExecute() {
             super.onPreExecute();
-            pd = new ProgressDialog(mainActivity);
+            pd = new ProgressDialog(context);
             pd.setCancelable(false);
             pd.setMessage("Загрузка...");
+            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             pd.getWindow().setGravity(Gravity.CENTER);
             pd.show();
         }
