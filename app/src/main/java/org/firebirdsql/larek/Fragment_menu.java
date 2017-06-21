@@ -39,7 +39,12 @@ public class Fragment_menu extends Fragment {
         btn_larek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO Larek
+                Fragment_order fragmentOrder = new Fragment_order();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, fragmentOrder);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorTitle"
+        android:padding="2dp"
+        android:id="@+id/toolBarfrag"
+        >
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/round_button"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Menu"
+            android:id="@+id/btn_back"
+            android:textColor="@color/colorText" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/clientTextSize"
+            android:text="Заказ"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutClient"
+        android:layout_below="@+id/toolBarfrag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textClientName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Константинопольский\nКонстантин Константинович"
+            android:textColor="@color/colorText"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/textClientOccupation"
+            android:layout_marginTop="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textClientName"
+            android:text="Электронавигатор"
+            android:textColor="@color/colorText"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/btnAddClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Выберете клиента"
+            android:textColor="@color/colorBackground"
+            android:textSize="30sp"
+            android:visibility="invisible" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorText"
+            android:orientation="horizontal"
+            android:layout_below="@id/textClientOccupation"
+            android:layout_alignStart="@+id/textClientName"
+            android:layout_alignEnd="@+id/textClientName"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutSales"
+        android:layout_below="@+id/toolBarfrag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/layoutClient">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Товары"
+            android:id="@+id/textSaless"
+            android:textColor="@color/colorText"
+            android:textSize="30sp" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_below="@id/textSaless"
+            android:id="@+id/layoutSalesItems"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorText"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutListOrder"
+        android:layout_below="@+id/layoutClient"
+        android:layout_toLeftOf="@id/layoutSales">
+
+        <ListView
+            android:id="@+id/listOrder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@id/layoutSales"
+            >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textFullPrice"
+            android:text="Итого 20$"
+            android:textColor="@color/colorText"
+            android:textSize="20sp"
+            />
+        <Button
+            android:layout_below="@id/textFullPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnCancel"
+            android:text="Отмена"
+            android:textColor="@color/colorText"
+            android:textSize="20sp"
+
+            />
+        <Button
+            android:layout_below="@id/textFullPrice"
+            android:layout_toRightOf="@+id/btnCancel"
+            android:layout_marginLeft="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnOplata"
+            android:text="Оплата"
+            android:textColor="@color/colorText"
+            android:textSize="20sp"
+            />
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+

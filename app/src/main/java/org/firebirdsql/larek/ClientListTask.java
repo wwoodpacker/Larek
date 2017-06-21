@@ -25,10 +25,12 @@ public class ClientListTask extends AsyncTask<Void,Void,ArrayList<String>> {
     MenuActivity menuActivity;
     ArrayList<String> result;
     public AsyncResponse delegate = null;
+    private DBhelperFirebird dBhelperFirebird;
 
     public ClientListTask(ClientAdapter _clientadapter, Context context){
         clientAdapter=_clientadapter;
         this.context=context;
+        dBhelperFirebird=new DBhelperFirebird();
     }
 
     @Override
@@ -37,26 +39,10 @@ public class ClientListTask extends AsyncTask<Void,Void,ArrayList<String>> {
         result=new ArrayList<>();
         try
         {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                    .detectNetwork()
-                    .build());
-
-            //aktivate logging over adb (optional)
-            System.setProperty("FBAdbLog", "true");
-            //register Driver
-            Class.forName(GlobalVariables.getInstance().getDriverName());
-            //Get connection
-            String sCon = GlobalVariables.getInstance().getUsersArraybaseURL();
-            Connection con = DriverManager.getConnection(sCon, GlobalVariables.getInstance().getLogin(),
-                    GlobalVariables.getInstance().getPassword());
-            //Query (get Table Count)
-
             String sSql = "SELECT ID,\"Surname\",\"Name\",\"Patronimic\",\"Occupation\",\"Larek_Dep\",\"Status\" FROM \"Larek_Employees\"";
-            Statement stmt = con.createStatement();
-            //ResultSet rs = stmt.executeQuery(sSql);
             ResultSet RSFind=null;
             boolean rsReady = false;
-            PreparedStatement StatementRSFind = con.prepareStatement(sSql);
+            PreparedStatement StatementRSFind = dBhelperFirebird.getPreparedStatement(sSql);
             RSFind = StatementRSFind.executeQuery();
             rsReady = RSFind.next();
             int i = 0;
@@ -75,13 +61,7 @@ public class ClientListTask extends AsyncTask<Void,Void,ArrayList<String>> {
                     client.setLarek_Dep((String)RSFind.getObject("Larek_dep"));
                     client.setStatus("1");
                     clientAdapter.add(client);
-                    /*String name = (String) RSFind.getObject("Name");
-                    String pass = (String) RSFind.getObject("Password");
-                    result.add(name);
-                    result.add(pass);
-                    Log.e("SQL Response",name);;*/
                     Log.e("SQL Response","done");
-
                     done = !RSFind.next();
                 }
 

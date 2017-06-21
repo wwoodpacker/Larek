@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/colorText"
-        android:textSize="50sp"
+        android:textSize="@dimen/clientTextSize"
         android:text="Клиенты"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"

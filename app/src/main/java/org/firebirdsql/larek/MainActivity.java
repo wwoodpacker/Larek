@@ -140,9 +140,10 @@ public class MainActivity extends Activity implements AsyncResponse{
         Context context;
         ArrayList<String> result;
         public AsyncResponse delegate = null;
-
+        private DBhelperFirebird dBhelperFirebird;
         public FirstConnectDB(Context _context){
             context=_context;
+            dBhelperFirebird=new DBhelperFirebird();
         }
 
         @Override
@@ -150,25 +151,10 @@ public class MainActivity extends Activity implements AsyncResponse{
             result=new ArrayList<>();
             try
             {
-                StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                        .detectNetwork()
-                        .build());
-
-                //aktivate logging over adb (optional)
-                System.setProperty("FBAdbLog", "true");
-                //register Driver
-                Class.forName(GlobalVariables.getInstance().getDriverName());
-                //Get connection
-                String sCon = GlobalVariables.getInstance().getUsersArraybaseURL();
-                Connection con = DriverManager.getConnection(sCon, GlobalVariables.getInstance().getLogin(),
-                                                                    GlobalVariables.getInstance().getPassword());
-                //Query (get Table Count)
                 String sSql = "SELECT \"Name\",\"Password\" FROM \"Larek_authorization_list\"";
-                Statement stmt = con.createStatement();
-                //ResultSet rs = stmt.executeQuery(sSql);
                 ResultSet RSFind=null;
                 boolean rsReady = false;
-                PreparedStatement StatementRSFind = con.prepareStatement(sSql);
+                PreparedStatement StatementRSFind = dBhelperFirebird.getPreparedStatement(sSql);
                 RSFind = StatementRSFind.executeQuery();
                 rsReady = RSFind.next();
                 int i = 0;
