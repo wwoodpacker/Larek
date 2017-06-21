@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,16 +31,34 @@ public class Fragment_client extends Fragment implements AsyncResponse{
     public ClientAdapter clientAdapter;
     public ProgressBar progressBar;
     public ImageView btnSearch,btnSort;
+    public static Fragment_client fragment_client;
+    public boolean isFromMenu;
+    public String title;
+
+    public static Fragment_client newInstance(boolean isFromMenu,String title){
+        Fragment_client fragmentClient=new Fragment_client();
+        Bundle args = new Bundle();
+        args.putBoolean("isFromMenu", isFromMenu);
+        args.putString("title", title);
+        fragmentClient.setArguments(args);
+        return fragmentClient;
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_client,null);
+        isFromMenu=getArguments().getBoolean("isFromMenu");
+        title=getArguments().getString("title");
+        TextView textTitle= (TextView)view.findViewById(R.id.textTitle);
+        textTitle.setText(title);
+
         listView=(ListView)view.findViewById(R.id.client_list);
         progressBar=(ProgressBar)view.findViewById(R.id.process);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(true);
         btnSearch=(ImageView)view.findViewById(R.id.btn_search);
         btnSort=(ImageView)view.findViewById(R.id.btn_sort);
+
         Button btn_back=(Button)view.findViewById(R.id.btn_back);
 
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +71,7 @@ public class Fragment_client extends Fragment implements AsyncResponse{
                 fragmentTransaction.commit();
             }
         });
-        clientAdapter = new ClientAdapter(getContext(),getFragmentManager());
+        clientAdapter = new ClientAdapter(getContext(),getFragmentManager(),isFromMenu);
         listView.setAdapter(clientAdapter);
         ClientListTask clientListTask=new ClientListTask(clientAdapter,getContext());
         clientListTask.delegate=this;

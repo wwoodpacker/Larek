@@ -2,6 +2,7 @@ package org.firebirdsql.larek;
 
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +29,14 @@ public class ClientAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     public FragmentManager fragmentManager;
-    public ClientAdapter(Context context,FragmentManager fm){
+    public boolean isFromMenu;
+    String name,occupation;
+    public ClientAdapter(Context context,FragmentManager fm,boolean isFromMenu){
         mContext=context;
         fragmentManager=fm;
         mLayoutInflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.isFromMenu=isFromMenu;
     }
     public void add(Client client){
         clientsList.add(client);
@@ -67,11 +71,49 @@ public class ClientAdapter extends BaseAdapter {
         TextView client_occupation= (TextView)itemView.findViewById(R.id.client_occupation);
         ImageView btn_buy=(ImageView)itemView.findViewById(R.id.buy);
         ImageView btn_orders=(ImageView)itemView.findViewById(R.id.orders);
-
+        if (isFromMenu){
+            btn_buy.setVisibility(View.VISIBLE);
+            btn_orders.setVisibility(View.VISIBLE);
+        }else{
+            btn_buy.setVisibility(View.INVISIBLE);
+            btn_orders.setVisibility(View.INVISIBLE);
+        }
         final Client mClient= this.clientsList.get(position);
-        client_name.setText(mClient.getSurname()+" "+mClient.getName()+" "+mClient.getPatronimic());
-        client_occupation.setText(mClient.getOccupation());
-
+        final String name=mClient.getSurname()+" "+mClient.getName()+" "+mClient.getPatronimic();
+        final String occupation=mClient.getOccupation();
+        if (mClient.getStatus()==0){
+            client_name.setTextColor(mContext.getResources().getColor(R.color.red));
+            client_occupation.setTextColor(mContext.getResources().getColor(R.color.red));
+            client_name.setText(name);
+            client_occupation.setText(occupation);
+        }else{
+            client_name.setTextColor(mContext.getResources().getColor(R.color.colorText));
+            client_occupation.setTextColor(mContext.getResources().getColor(R.color.colorText));
+            client_name.setText(name);
+            client_occupation.setText(occupation);
+        }
+        btn_buy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment_order fragmentOrder = Fragment_order.newInstance(true,name,occupation);
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, fragmentOrder);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+        if (!isFromMenu) {
+            client_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment_order fragmentOrder = Fragment_order.newInstance(true,name,occupation);
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frgmCont, fragmentOrder);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+            });
+        }
         return itemView;
     }
     // Filter Class

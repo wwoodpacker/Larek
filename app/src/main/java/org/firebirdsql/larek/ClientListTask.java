@@ -53,13 +53,13 @@ public class ClientListTask extends AsyncTask<Void,Void,ArrayList<String>> {
                 {
                     i++;
                     Client client=new Client();
-                    client.setID("1");
+                    client.setID((Integer)RSFind.getObject("ID"));
                     client.setSurname((String)RSFind.getObject("Surname"));
                     client.setName((String)RSFind.getObject("Name"));
                     client.setPatronimic((String)RSFind.getObject("Patronimic"));
                     client.setOccupation((String)RSFind.getObject("Occupation"));
                     client.setLarek_Dep((String)RSFind.getObject("Larek_dep"));
-                    client.setStatus("1");
+                    client.setStatus((Integer)RSFind.getObject("Status"));
                     clientAdapter.add(client);
                     Log.e("SQL Response","done");
                     done = !RSFind.next();

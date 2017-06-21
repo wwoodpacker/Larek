@@ -27,7 +27,7 @@ public class Fragment_menu extends Fragment {
         btn_client.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment_client fragmentClient=new Fragment_client();
+                Fragment_client fragmentClient=Fragment_client.newInstance(true,"Клиенты");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.frgmCont, fragmentClient);
@@ -39,7 +39,7 @@ public class Fragment_menu extends Fragment {
         btn_larek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment_order fragmentOrder = new Fragment_order();
+                Fragment_order fragmentOrder = Fragment_order.newInstance(false,"1","1");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.frgmCont, fragmentOrder);

@@ -5,15 +5,15 @@ package org.firebirdsql.larek;
  */
 
 public class Client {
-    private String ID;
+    private int ID;
     private String Surname;
     private String Name;
     private String Patronimic;
     private String Occupation;
     private String Larek_Dep;
-    private String Status;
+    private int Status;
 
-    public String getID() {
+    public int getID() {
         return ID;
     }
 
@@ -33,7 +33,7 @@ public class Client {
         return Patronimic;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return Status;
     }
 
@@ -41,7 +41,7 @@ public class Client {
         return Surname;
     }
 
-    public void setID(String ID) {
+    public void setID(int ID) {
         this.ID = ID;
     }
 
@@ -61,7 +61,7 @@ public class Client {
         Patronimic = patronimic;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         Status = status;
     }
 

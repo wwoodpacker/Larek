@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorText"
         android:textSize="@dimen/clientTextSize"
+        android:id="@+id/textTitle"
         android:text="Клиенты"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"

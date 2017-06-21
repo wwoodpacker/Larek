@@ -3,6 +3,7 @@ package org.firebirdsql.larek;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +25,57 @@ public class Fragment_order extends Fragment {
     private List<View> allBtnSales;
     public LinearLayout layoutSalesItems;
     public  LinearLayout row=null;
+    public boolean isClient;
+    public String nameClient,clientOccupation;
+    public TextView textClientName,textClientOccupation;
     int kil=0;
+    public static Fragment_order fragment_order;
+
+
+    public static Fragment_order newInstance(boolean isClient,String nameClient,String clientOccupation){
+        Fragment_order fragmentOrder=new Fragment_order();
+        Bundle args = new Bundle();
+        args.putBoolean("isClient", isClient);
+        args.putString("clientName", nameClient);
+        args.putString("clientOccupation", clientOccupation);
+        fragmentOrder.setArguments(args);
+        return fragmentOrder;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view=inflater.inflate(R.layout.fragment_order,container,false);
+        isClient=getArguments().getBoolean("isClient");
+        nameClient=getArguments().getString("clientName");
+        clientOccupation=getArguments().getString("clientOccupation");
+        //textviews
+        textClientName=(TextView)view.findViewById(R.id.textClientName);
+        textClientOccupation=(TextView)view.findViewById(R.id.textClientOccupation);
+        //buttons
         btn_back=(Button)view.findViewById(R.id.btn_back);
         btnAddClient=(Button)view.findViewById(R.id.btnAddClient);
         btnCancel=(Button)view.findViewById(R.id.btnCancel);
         btnOplata=(Button)view.findViewById(R.id.btnOplata);
         allBtnSales = new ArrayList<View>();
+        if (isClient){
+            btnAddClient.setVisibility(View.INVISIBLE);
+            textClientOccupation.setVisibility(View.VISIBLE);
+            textClientName.setVisibility(View.VISIBLE);
+            textClientName.setText(nameClient);
+            textClientOccupation.setText(clientOccupation);
+        }else{
+           btnAddClient.setVisibility(View.VISIBLE);
+            textClientName.setVisibility(View.INVISIBLE);
+            textClientOccupation.setVisibility(View.INVISIBLE);
+        }
 
-        btnAddClient.setVisibility(View.VISIBLE);
         layoutSalesItems = (LinearLayout)view.findViewById(R.id.layoutSalesItems);
 
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -50,7 +91,13 @@ public class Fragment_order extends Fragment {
         btnAddClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Fragment_client fragmentClient=Fragment_client.newInstance(false,"Выберите Клиента");
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, fragmentClient);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            /*
                 if (kil%7!=0&&kil!=0){
                     Button btnTag = new Button(getContext());
                     btnTag.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
@@ -66,6 +113,20 @@ public class Fragment_order extends Fragment {
                     layoutSalesItems.addView(row);
                 }
                 kil++;
+            */
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnOplata.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
