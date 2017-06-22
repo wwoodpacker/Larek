@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorTitle"
+        android:padding="2dp"
+        android:id="@+id/toolBarfrag"
+        >
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/round_button"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Menu"
+            android:id="@+id/btn_back"
+            android:textColor="@color/colorText" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/clientTextSize"
+            android:text="Отчеты"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ordersByClients"
+            android:text="Заказы по сотруднику"
+            android:textColor="@color/colorText"
+            android:textAlignment="center"
+            android:layout_margin="20dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
+        <Button
+            android:layout_below="@+id/ordersByClients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ordersAll"
+            android:text="Все заказы"
+            android:textColor="@color/colorText"
+            android:textAlignment="center"
+            android:layout_margin="20dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
+        <Button
+            android:layout_below="@+id/ordersAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ostatkuNaSklade"
+            android:text="Остатки на складе"
+            android:textColor="@color/colorText"
+            android:textAlignment="center"
+            android:layout_margin="20dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+</RelativeLayout>
