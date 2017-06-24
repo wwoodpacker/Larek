@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -125,5 +126,15 @@ public class Fragment_client extends Fragment implements AsyncResponse{
     public void processFinish(ArrayList<String> output) {
         progressBar.setIndeterminate(false);
         progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void processProductSI(ArrayList<ProductSI> output) {
+
+    }
+
+    @Override
+    public void processProductII(ArrayList<ProductII> output) {
+
     }
 }

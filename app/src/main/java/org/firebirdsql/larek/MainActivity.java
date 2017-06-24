@@ -105,6 +105,17 @@ public class MainActivity extends Activity implements AsyncResponse{
 
 
     }
+
+    @Override
+    public void processProductSI(ArrayList<ProductSI> output) {
+
+    }
+
+    @Override
+    public void processProductII(ArrayList<ProductII> output) {
+
+    }
+
     public static final String md5(final String s) {
         final String MD5 = "MD5";
         try {

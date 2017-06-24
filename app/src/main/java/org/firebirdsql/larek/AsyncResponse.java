@@ -8,4 +8,6 @@ import java.util.ArrayList;
 
 public interface AsyncResponse {
     void processFinish(ArrayList<String> output);
+    void processProductSI(ArrayList<ProductSI> output);
+    void processProductII(ArrayList<ProductII> output);
 }
