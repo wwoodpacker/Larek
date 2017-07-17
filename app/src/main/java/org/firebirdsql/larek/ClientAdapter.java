@@ -81,6 +81,7 @@ public class ClientAdapter extends BaseAdapter {
         final Client mClient= this.clientsList.get(position);
         final String name=mClient.getSurname()+" "+mClient.getName()+" "+mClient.getPatronimic();
         final String occupation=mClient.getOccupation();
+        final int empID=mClient.getID();
         if (mClient.getStatus()==0){
             client_name.setTextColor(mContext.getResources().getColor(R.color.red));
             client_occupation.setTextColor(mContext.getResources().getColor(R.color.red));
@@ -95,7 +96,7 @@ public class ClientAdapter extends BaseAdapter {
         btn_buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment_order fragmentOrder = Fragment_order.newInstance(true,name,occupation);
+                Fragment_order fragmentOrder = Fragment_order.newInstance(true,name,occupation,empID);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.frgmCont, fragmentOrder);
                 fragmentTransaction.addToBackStack(null);
@@ -106,7 +107,7 @@ public class ClientAdapter extends BaseAdapter {
             client_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Fragment_order fragmentOrder = Fragment_order.newInstance(true,name,occupation);
+                    Fragment_order fragmentOrder = Fragment_order.newInstance(true,name,occupation,empID);
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.frgmCont, fragmentOrder);
                     fragmentTransaction.addToBackStack(null);

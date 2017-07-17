@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorText"
             android:textSize="@dimen/clientTextSize"
-            android:text="Заказ"
+            android:text="Оплата заказа"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             />
@@ -47,7 +47,7 @@
 
         <TextView
             android:id="@+id/textClientOccupation"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="140dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textClientName"
@@ -55,94 +55,53 @@
             android:textColor="@color/colorText"
             android:textSize="30sp" />
 
-        <Button
-            android:id="@+id/btnAddClient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Выберете клиента"
-            android:textColor="@color/colorBackground"
-            android:textSize="30sp"
-            android:visibility="invisible" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorText"
-            android:orientation="horizontal"
-            android:layout_below="@id/textClientOccupation"
-            android:layout_alignStart="@+id/textClientName"
-            android:layout_alignEnd="@+id/textClientName"
-            />
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/layoutSales"
-        android:layout_below="@+id/toolBarfrag"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/layoutClient">
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/process"
-            android:layout_centerInParent="true"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="Товары"
-            android:id="@+id/textSaless"
-            android:textColor="@color/colorText"
-            android:textSize="30sp" />
-<ScrollView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/textSaless"
-    >
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_below="@id/textSaless"
-            android:id="@+id/layoutSalesItems"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </LinearLayout>
-</ScrollView>
-        <LinearLayout
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorText"
-            android:orientation="vertical"
-            android:layout_alignParentStart="true"
-            />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/layoutListOrder"
-        android:layout_below="@+id/layoutClient"
-        android:layout_toLeftOf="@id/layoutSales">
-
+        android:layout_below="@+id/toolBarfrag"
+        android:layout_above="@+id/relFull"
+        android:layout_toRightOf="@id/layoutClient">
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorText"
+            android:orientation="vertical"
+            android:id="@+id/ln2"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true" />
         <ListView
             android:id="@+id/listOrder"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         </ListView>
-        </RelativeLayout>
-        <RelativeLayout
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relFull"
+        android:layout_alignParentBottom="true"
+
+        >
+        <LinearLayout
+            android:layout_alignParentStart="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@id/layoutSales"
-            >
+            android:layout_height="1dp"
+            android:background="@color/colorText"
+            android:orientation="horizontal"
+            android:id="@+id/ln1"
+            />
         <TextView
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textFullPrice"
-            android:text="Итого 0$"
+            android:text="К оплате 0$"
+            android:textAlignment="center"
             android:textColor="@color/colorText"
             android:textSize="20sp"
             />
@@ -150,15 +109,16 @@
             android:layout_below="@id/textFullPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnCancel"
-            android:text="Отмена"
+            android:layout_centerInParent="true"
+            android:id="@+id/btnEditOrder"
+            android:text="Изменить заказ"
             android:textColor="@color/colorText"
             android:textSize="20sp"
 
             />
         <Button
             android:layout_below="@id/textFullPrice"
-            android:layout_toRightOf="@+id/btnCancel"
+            android:layout_toRightOf="@+id/btnEditOrder"
             android:layout_marginLeft="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -167,8 +127,8 @@
             android:textColor="@color/colorText"
             android:textSize="20sp"
             />
-        </RelativeLayout>
     </RelativeLayout>
+</RelativeLayout>
 
 
 

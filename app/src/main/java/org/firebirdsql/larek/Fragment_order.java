@@ -16,12 +16,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,23 +42,27 @@ public class Fragment_order extends Fragment implements AsyncResponse{
     public  LinearLayout row=null;
     public boolean isClient;
     public String nameClient,clientOccupation;
+    public int empID;
     public TextView textClientName;
     public TextView textClientOccupation;
     public static TextView textTotalPrice;
     public ArrayList<ProductSI> productsSI;
     public ArrayList<ProductII> productsII;
+    public ArrayList<OrderItem> orderItems;
     public OrderAdapter orderAdapter;
     public static double totalPrice=0;
     int kil=0;
+    ScrollView sv;
     public static Fragment_order fragment_order;
 
 
-    public static Fragment_order newInstance(boolean isClient,String nameClient,String clientOccupation){
+    public static Fragment_order newInstance(boolean isClient,String nameClient,String clientOccupation,int empID){
         Fragment_order fragmentOrder=new Fragment_order();
         Bundle args = new Bundle();
         args.putBoolean("isClient", isClient);
         args.putString("clientName", nameClient);
         args.putString("clientOccupation", clientOccupation);
+        args.putInt("empID", empID);
         fragmentOrder.setArguments(args);
         return fragmentOrder;
     }
@@ -68,6 +78,7 @@ public class Fragment_order extends Fragment implements AsyncResponse{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view=inflater.inflate(R.layout.fragment_order,container,false);
         totalPrice=0;
+        orderItems=new ArrayList<>();
         ProductSITask productSITask = new ProductSITask(getContext());
         productSITask.delegate=this;
         productSITask.execute();
@@ -82,13 +93,14 @@ public class Fragment_order extends Fragment implements AsyncResponse{
         isClient=getArguments().getBoolean("isClient");
         nameClient=getArguments().getString("clientName");
         clientOccupation=getArguments().getString("clientOccupation");
+        empID=getArguments().getInt("empID");
         //textviews
         textClientName=(TextView)view.findViewById(R.id.textClientName);
         textClientOccupation=(TextView)view.findViewById(R.id.textClientOccupation);
         textTotalPrice=(TextView)view.findViewById(R.id.textFullPrice);
 
         ListView listView=(ListView)view.findViewById(R.id.listOrder);
-        orderAdapter = new OrderAdapter(getContext());
+        orderAdapter = new OrderAdapter(getContext(),false);
         listView.setAdapter(orderAdapter);
 
         //buttons
@@ -109,7 +121,9 @@ public class Fragment_order extends Fragment implements AsyncResponse{
             textClientOccupation.setVisibility(View.INVISIBLE);
         }
 
+
         layoutSalesItems = (LinearLayout)view.findViewById(R.id.layoutSalesItems);
+
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +162,24 @@ public class Fragment_order extends Fragment implements AsyncResponse{
             @Override
             public void onClick(View v) {
                 if (isClient){
-
+                    Order order= new Order();
+                    order.setEmpName(nameClient);
+                    order.setEmpOccupation(clientOccupation);
+                    order.setSeller(Integer.valueOf(GlobalVariables.getInstance().getID()));
+                    order.setSoldtime(getSoldTime());
+                    order.setEmployees(empID);
+                    order.setTotal(totalPrice);
+                    orderItems.clear();
+                    for(int i=0 ; i<orderAdapter.getCount() ; i++){
+                        OrderItem obj = orderAdapter.getItem(i);
+                        orderItems.add(obj);
+                    }
+                    FragmentApplyOrder fragmentApplyOrder=FragmentApplyOrder.newInstance(order,orderItems);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frgmCont, fragmentApplyOrder);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 }else{
                     Toast.makeText(getContext(),"Выберите клиента!",Toast.LENGTH_SHORT).show();
                 }
@@ -156,32 +187,52 @@ public class Fragment_order extends Fragment implements AsyncResponse{
         });
         return view;
     }
-
+public String getSoldTime(){
+    Calendar calander = Calendar.getInstance();
+    String cDay = String.valueOf(calander.get(Calendar.DAY_OF_MONTH));
+    String cMonth = String.valueOf(calander.get(Calendar.MONTH) + 1);
+    String cYear = String.valueOf(calander.get(Calendar.YEAR));
+    Date date = new Date();
+    date.setHours(date.getHours());
+    SimpleDateFormat simpDate;
+    simpDate = new SimpleDateFormat("kk:mm:ss");
+    String cHour = String.valueOf(calander.get(Calendar.HOUR));
+    String cMinute = String.valueOf(calander.get(Calendar.MINUTE));
+    String cSecond = String.valueOf(calander.get(Calendar.SECOND));
+    return cDay+"."+cMonth+"."+cYear+" "+simpDate.format(date);//cHour+":"+cMinute+":"+cSecond;
+}
     public void displayProducts(ArrayList<ProductSI> products){
         for (int i=0;i<products.size();i++) {
-            if (i % 5 != 0 && i != 0) {
+            if (i % 3 != 0 && i != 0) {
                 Button btnTag = new Button(getContext());
-                btnTag.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                RelativeLayout.LayoutParams p= new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                btnTag.setLayoutParams(p);
+                btnTag.getLayoutParams().height=300;
+                btnTag.getLayoutParams().width=300;
                 btnTag.setText(products.get(i).getName());
                 btnTag.setId(i);
                 btnTag.setOnClickListener(myOnlyhandler);
                 row.addView(btnTag);
             } else {
                 row = new LinearLayout(getContext());
-                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 Button btnTag = new Button(getContext());
                 btnTag.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                btnTag.getLayoutParams().height=300;
+                btnTag.getLayoutParams().width=300;
                 btnTag.setText(products.get(i).getName());
                 btnTag.setId(i);
                 btnTag.setOnClickListener(myOnlyhandler);
                 row.addView(btnTag);
                 layoutSalesItems.addView(row);
+
             }
         }
+
     }
     View.OnClickListener myOnlyhandler = new View.OnClickListener() {
         public void onClick(View v) {
-            //Log.e("click",productsSI.get(v.getId()).getProductII());
+
             int pos=v.getId();
             String name=productsSI.get(pos).getName();
             int count=productsSI.get(pos).getCount();
@@ -193,7 +244,17 @@ public class Fragment_order extends Fragment implements AsyncResponse{
                 }
             }
             price2=price1*count;
-            String orderItem=name+" "+String.valueOf(count)+" шт "+String.valueOf(price1)+"$ "+String.valueOf(price2)+"$";
+            OrderItem orderItem =new OrderItem();
+            orderItem.setOrderItemName(productsSI.get(pos).getName());
+            orderItem.setSi_id(productsSI.get(pos).getId());
+            orderItem.setSi_count(productsSI.get(pos).getCount());
+            orderItem.setSi_price(price1);
+            orderItem.setSi_total(price2);
+            orderItem.setIi_id(productsSI.get(pos).getProductII());
+            orderItem.setIi_count(productsSI.get(pos).getCount());
+            orderItem.setIi_price(price1);
+            orderItem.setIi_total(price2);
+            orderItems.add(orderItem);
             totalPrice+=price2;
             showTotalPrice(totalPrice);
             orderAdapter.add(orderItem);
@@ -201,7 +262,9 @@ public class Fragment_order extends Fragment implements AsyncResponse{
         }
     };
     public static void showTotalPrice(double total){
-        textTotalPrice.setText("Итого "+String.valueOf(total)+"$");
+        DecimalFormat df = new DecimalFormat("#.####");
+        df.setRoundingMode(RoundingMode.CEILING);
+        textTotalPrice.setText("Итого "+String.valueOf(df.format(total))+"$");
     }
     @Override
     public void processFinish(ArrayList<String> output) {
@@ -211,14 +274,15 @@ public class Fragment_order extends Fragment implements AsyncResponse{
     @Override
     public void processProductSI(ArrayList<ProductSI> output) {
             productsSI=output;
-            progressBar.setIndeterminate(false);
-            progressBar.setVisibility(View.INVISIBLE);
-            displayProducts(output);
+
     }
 
     @Override
     public void processProductII(ArrayList<ProductII> output) {
         productsII=output;
+        progressBar.setIndeterminate(false);
+        progressBar.setVisibility(View.INVISIBLE);
+        displayProducts(productsSI);
     }
 
 

@@ -7,18 +7,37 @@ package org.firebirdsql.larek;
 public class GlobalVariables {
 
     private static GlobalVariables instance=null;
+    private String ID;
     private String name;
     private String phone;
     private String usersArraybaseURL;
     private String login;
     private String password;
     private String DriverName;
+    private String padName;
+    private String larekDep;
     public static synchronized GlobalVariables getInstance(){
         if(instance==null){
             instance=new GlobalVariables();
 
         }
         return instance;
+    }
+
+    public void setLarekDep(String larekDep) {
+        this.larekDep = larekDep;
+    }
+
+    public String getLarekDep() {
+        return larekDep;
+    }
+
+    public void setPadName(String padName) {
+        this.padName = padName;
+    }
+
+    public String getPadName() {
+        return padName;
     }
 
     public String getDriverName() {
@@ -66,5 +85,13 @@ public class GlobalVariables {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public String getID() {
+        return ID;
     }
 }

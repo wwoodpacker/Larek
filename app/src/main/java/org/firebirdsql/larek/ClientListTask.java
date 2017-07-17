@@ -37,9 +37,11 @@ public class ClientListTask extends AsyncTask<Void,Void,ArrayList<String>> {
     protected ArrayList<String> doInBackground(Void... params) {
         clientsarray = new ArrayList<Client>();
         result=new ArrayList<>();
+        String sSql="";
+        sSql = "SELECT ID,\"Surname\",\"Name\",\"Patronimic\",\"Occupation\",\"Larek_Dep\",\"Status\" FROM \"Larek_Employees\" WHERE \"Larek_Dep\" = \'"+GlobalVariables.getInstance().getLarekDep()+"\'";
         try
         {
-            String sSql = "SELECT ID,\"Surname\",\"Name\",\"Patronimic\",\"Occupation\",\"Larek_Dep\",\"Status\" FROM \"Larek_Employees\"";
+
             ResultSet RSFind=null;
             boolean rsReady = false;
             PreparedStatement StatementRSFind = dBhelperFirebird.getPreparedStatement(sSql);

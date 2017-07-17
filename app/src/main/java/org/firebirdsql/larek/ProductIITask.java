@@ -28,7 +28,7 @@ public class ProductIITask extends AsyncTask<Void,Void,ArrayList<ProductII>> {
         result=new ArrayList<>();
         try
         {
-            String sSql = "SELECT ID,\"NAME\",\"LAREK_DEP\",\"PRICE\" FROM \"LAREK_PRODUCT_II\"";
+            String sSql = "SELECT ID,\"NAME\",\"LAREK_DEP\",\"PRICE\" FROM \"LAREK_PRODUCT_II\" WHERE LAREK_DEP = \'"+GlobalVariables.getInstance().getLarekDep()+"\'";
             ResultSet RSFind=null;
             boolean rsReady = false;
             PreparedStatement StatementRSFind = dBhelperFirebird.getPreparedStatement(sSql);
@@ -48,6 +48,7 @@ public class ProductIITask extends AsyncTask<Void,Void,ArrayList<ProductII>> {
                     productII.setPrice((Double)RSFind.getObject("PRICE"));
                     result.add(productII);
                     done = !RSFind.next();
+                    Log.e("ProductII","done!");
                 }
 
                 RSFind.close();

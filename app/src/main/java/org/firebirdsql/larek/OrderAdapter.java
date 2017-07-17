@@ -21,19 +21,20 @@ import java.util.Locale;
  */
 
 public class OrderAdapter extends BaseAdapter {
-    private ArrayList<String> orderItems= new ArrayList<String>();
+    private ArrayList<OrderItem> orderItems= new ArrayList<>();
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     public FragmentManager fragmentManager;
-    public boolean isFromMenu;
+    public boolean isOrder;
     String name,occupation;
-    public OrderAdapter(Context context){
+    public OrderAdapter(Context context,boolean isOrder){
         mContext=context;
+        this.isOrder=isOrder;
     }
-    public void add(String orderItem){
+    public void add(OrderItem orderItem){
         orderItems.add(orderItem);
     }
-    public void upDatelist(ArrayList<String> orderItems){
+    public void upDatelist(ArrayList<OrderItem> orderItems){
         this.orderItems=orderItems;
         notifyDataSetChanged();
     }
@@ -44,7 +45,7 @@ public class OrderAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public OrderItem getItem(int position) {
         return orderItems.get(position);
     }
 
@@ -61,13 +62,20 @@ public class OrderAdapter extends BaseAdapter {
                 R.layout.order_item,null);
         final TextView order_item= (TextView)convertView.findViewById(R.id.order_item_text);
         ImageView btn_delete=(ImageView)convertView.findViewById(R.id.delete);
-        order_item.setText(orderItems.get(position));
+        if (isOrder){
+            btn_delete.setVisibility(View.INVISIBLE);
+        }else{
+            btn_delete.setVisibility(View.VISIBLE);
+        }
+        order_item.setText(orderItems.get(position).getOrderItemName()+" "
+                +String.valueOf(orderItems.get(position).getSi_count())+" шт "
+                +String.valueOf(orderItems.get(position).getIi_price())+"$ "
+                +String.valueOf(orderItems.get(position).getSi_total())+"$");
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Fragment_order.totalPrice-=Double.valueOf(orderItems.get(position).substring(orderItems.get(position).indexOf("$")+2,orderItems.get(position).length()-2));
+                Fragment_order.totalPrice-=orderItems.get(position).getSi_total();
                 Fragment_order.showTotalPrice(Fragment_order.totalPrice);
                 orderItems.remove(position);
                 notifyDataSetChanged();

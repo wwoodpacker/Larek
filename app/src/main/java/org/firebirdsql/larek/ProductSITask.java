@@ -28,7 +28,9 @@ public class ProductSITask extends AsyncTask<Void,Void,ArrayList<ProductSI>> {
         result=new ArrayList<>();
         try
         {
-            String sSql = "SELECT ID,\"NAME\",\"LAREK_PRODUCT_II\",\"COUNT_II\" FROM \"LAREK_PRODUCT_SI\"";
+
+            String sSql
+                    ="SELECT * FROM LAREK_PRODUCT_SI Join LAREK_PRODUCT_II ON LAREK_PRODUCT_SI.LAREK_PRODUCT_II=LAREK_PRODUCT_II.ID where LAREK_PRODUCT_II.LAREK_DEP=\'"+GlobalVariables.getInstance().getLarekDep()+"\'";
             ResultSet RSFind=null;
             boolean rsReady = false;
             PreparedStatement StatementRSFind = dBhelperFirebird.getPreparedStatement(sSql);
@@ -47,7 +49,7 @@ public class ProductSITask extends AsyncTask<Void,Void,ArrayList<ProductSI>> {
                     productSI.setCount((Integer)RSFind.getObject("COUNT_II"));
                     productSI.setProductII((Integer)RSFind.getObject("LAREK_PRODUCT_II"));
                     result.add(productSI);
-                    Log.e("SQL Response","done");
+                    Log.e("ProductSI","done");
                     done = !RSFind.next();
                 }
 

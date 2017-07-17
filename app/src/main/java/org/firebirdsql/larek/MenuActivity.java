@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class MenuActivity extends FragmentActivity {
     public Fragment_menu fragmentMenu;
-    public TextView user_name;
+    public TextView user_name,mPadName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +26,9 @@ public class MenuActivity extends FragmentActivity {
         Intent intent = getIntent();
         String Name = intent.getStringExtra("name");
         user_name=(TextView)findViewById(R.id.user_name);
+        mPadName=(TextView)findViewById(R.id.pad_name);
         user_name.setText(Name);
+        mPadName.setText(GlobalVariables.getInstance().getPadName());
         //Fragment
         fragmentMenu=new Fragment_menu();
         //FragmentManager fragmentManager = getFragmentManager();

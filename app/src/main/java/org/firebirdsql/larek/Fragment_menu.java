@@ -39,7 +39,7 @@ public class Fragment_menu extends Fragment {
         btn_larek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment_order fragmentOrder = Fragment_order.newInstance(false,"1","1");
+                Fragment_order fragmentOrder = Fragment_order.newInstance(false,"1","1",0);
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.frgmCont, fragmentOrder);
