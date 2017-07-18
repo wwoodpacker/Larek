@@ -1,6 +1,8 @@
 package org.firebirdsql.larek;
 
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,13 +23,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.listeners.ActionClickListener;
+
 import java.util.ArrayList;
 
 /**
  * Created by nazar.humeniuk on 14.06.17.
  */
 
-public class Fragment_client extends Fragment implements AsyncResponse{
+public class Fragment_client extends Fragment implements AsyncResponse,ConnectionReceiver.ConnectivityReceiverListener{
     public ListView listView;
     public ClientAdapter clientAdapter;
     public ProgressBar progressBar;
@@ -35,6 +41,7 @@ public class Fragment_client extends Fragment implements AsyncResponse{
     public static Fragment_client fragment_client;
     public boolean isFromMenu;
     public String title;
+    private DBhelperSqllite dBhelperSqllite;
 
     public static Fragment_client newInstance(boolean isFromMenu,String title){
         Fragment_client fragmentClient=new Fragment_client();
@@ -48,6 +55,8 @@ public class Fragment_client extends Fragment implements AsyncResponse{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_client,null);
+        MenuActivity.readQuery();
+        dBhelperSqllite=new DBhelperSqllite(getContext());
         isFromMenu=getArguments().getBoolean("isFromMenu");
         title=getArguments().getString("title");
         TextView textTitle= (TextView)view.findViewById(R.id.textTitle);
@@ -74,9 +83,16 @@ public class Fragment_client extends Fragment implements AsyncResponse{
         });
         clientAdapter = new ClientAdapter(getContext(),getFragmentManager(),isFromMenu);
         listView.setAdapter(clientAdapter);
-        ClientListTask clientListTask=new ClientListTask(clientAdapter,getContext());
-        clientListTask.delegate=this;
-        clientListTask.execute();
+        if(checkConnection()){
+            ClientListTask clientListTask=new ClientListTask(clientAdapter,getContext());
+            clientListTask.delegate=this;
+            clientListTask.execute();
+        }else {
+            progressBar.setIndeterminate(false);
+            progressBar.setVisibility(View.INVISIBLE);
+            readClients();
+        }
+
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -137,4 +153,82 @@ public class Fragment_client extends Fragment implements AsyncResponse{
     public void processProductII(ArrayList<ProductII> output) {
 
     }
+    public void readClients(){
+        try {
+            SQLiteDatabase db = dBhelperSqllite.getWritableDatabase();
+            String delSql="delete   from Larek_Employees\n" +
+                    "where    rowid not in\n" +
+                    "         (\n" +
+                    "         select  min(rowid)\n" +
+                    "         from    Larek_Employees\n" +
+                    "         group by\n" +
+                    "                 Surname\n" +
+                    "         ,       ID\n" +
+                    "         )";
+            Cursor c=db.rawQuery(delSql,null);
+            c.moveToFirst();
+            c.close();
+            String sSql = "SELECT ID,Surname,Name,Patronimic,Occupation,Larek_Dep,Status FROM Larek_Employees";
+            Cursor cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                Client client =new Client();
+                client.setID(cursor.getInt(cursor.getColumnIndex("ID")));
+                client.setSurname(cursor.getString(cursor.getColumnIndex("Surname")));
+                client.setName(cursor.getString(cursor.getColumnIndex("Name")));
+                client.setPatronimic(cursor.getString(cursor.getColumnIndex("Patronimic")));
+                client.setOccupation(cursor.getString(cursor.getColumnIndex("Occupation")));
+                client.setLarek_Dep(cursor.getString(cursor.getColumnIndex("Larek_Dep")));
+                clientAdapter.add(client);
+            }
+            clientAdapter.notifyDataSetChanged();
+            cursor.close();
+        }catch (Exception e){
+            Log.e("Sqllite",e.getMessage());
+        }
+    }
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        showInternet(isConnected);
+    }
+    private boolean checkConnection() {
+        boolean isConnected = ConnectionReceiver.isConnected();
+        showInternet(isConnected);
+        Log.e("connetion",String.valueOf(isConnected));
+        return isConnected;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LarekApplication.getInstance().setConnectivityListener(this);
+    }
+    public void showInternet(boolean isConnected){
+        if (isConnected)
+            SnackbarManager.show(
+                    Snackbar.with(getContext())
+                            .text("Онлайн режим")
+                            .actionLabel("Скрыть")
+                            .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)// action button label
+                            .actionListener(new ActionClickListener() {
+                                @Override
+                                public void onActionClicked(Snackbar snackbar) {
+                                    Toast.makeText(getContext(),"Перейдите в меню что-бы синхронизировать покупки!",Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                    , getActivity());
+        else
+            SnackbarManager.show(
+                    Snackbar.with(getContext()) // context
+                            .text("Оффлай режым") // text to display
+                            .actionLabel("Скрыть")
+                            .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
+                            .actionListener(new ActionClickListener() {
+                                @Override
+                                public void onActionClicked(Snackbar snackbar) {
+                                    MenuActivity.clearTheFile();
+                                }
+                            }) // action button's ActionClickListener
+                    ,getActivity());
+    }
+
 }

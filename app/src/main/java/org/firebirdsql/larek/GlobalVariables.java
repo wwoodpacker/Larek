@@ -1,5 +1,7 @@
 package org.firebirdsql.larek;
 
+import java.util.ArrayList;
+
 /**
  * Created by nazar.humeniuk on 14.06.17.
  */
@@ -16,6 +18,7 @@ public class GlobalVariables {
     private String DriverName;
     private String padName;
     private String larekDep;
+    private ArrayList<String> querys;
     public static synchronized GlobalVariables getInstance(){
         if(instance==null){
             instance=new GlobalVariables();
@@ -30,6 +33,14 @@ public class GlobalVariables {
 
     public String getLarekDep() {
         return larekDep;
+    }
+
+    public ArrayList<String> getQuerys() {
+        return querys;
+    }
+
+    public void setQuerys(ArrayList<String> querys) {
+        this.querys = querys;
     }
 
     public void setPadName(String padName) {

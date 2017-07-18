@@ -26,7 +26,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.androidadvance.topsnackbar.TSnackbar;
+
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.net.NetworkInterface;
 import java.security.MessageDigest;
@@ -104,6 +107,18 @@ public class MainActivity extends Activity implements AsyncResponse,ConnectionRe
         }else {
             try {
                 SQLiteDatabase db = dBhelperSqllite.getWritableDatabase();
+                String delSql="delete   from Larek_authorization_list\n" +
+                        "where    rowid not in\n" +
+                        "         (\n" +
+                        "         select  min(rowid)\n" +
+                        "         from    Larek_authorization_list\n" +
+                        "         group by\n" +
+                        "                 Name\n" +
+                        "         ,       ID\n" +
+                        "         )";
+                Cursor c=db.rawQuery(delSql,null);
+                c.moveToFirst();
+                c.close();
                 String sSql = "SELECT ID, Name, Password FROM Larek_authorization_list WHERE Larek_Dep = \'" + mPad.getLarek_dep() + "\'";
                 Cursor cursor = db.rawQuery(sSql, null);
                 ArrayList<String> res = new ArrayList<>();
@@ -328,9 +343,31 @@ public class MainActivity extends Activity implements AsyncResponse,ConnectionRe
     }
     public void showInternet(boolean isConnected){
         if (isConnected)
-            TSnackbar.make(findViewById(R.id.rel_main),"Онлайн режим",TSnackbar.LENGTH_LONG).setMaxWidth(3000).show();
+            SnackbarManager.show(
+                    Snackbar.with(getApplicationContext()) // context
+                            .text("Онлайн режим") // text to display
+                            .actionLabel("Скрыть") // action button label
+                            .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
+                            .actionListener(new ActionClickListener() {
+                                @Override
+                                public void onActionClicked(Snackbar snackbar) {
+
+                                }
+                            }) // action button's ActionClickListener
+                    , this);
         else
-            TSnackbar.make(findViewById(R.id.rel_main),"Оффнлайн режим",TSnackbar.LENGTH_LONG).setMaxWidth(3000).show();
+            SnackbarManager.show(
+                    Snackbar.with(getApplicationContext()) // context
+                            .text("Оффлай режым") // text to display
+                            .actionLabel("Скрыть")
+                            .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
+                            .actionListener(new ActionClickListener() {
+                                @Override
+                                public void onActionClicked(Snackbar snackbar) {
+
+                                }
+                            }) // action button's ActionClickListener
+                    ,this);
     }
 
     class FirstConnectDB extends AsyncTask<Void,Void,ArrayList<String>>{

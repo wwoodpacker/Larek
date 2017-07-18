@@ -55,6 +55,7 @@ public class ProductSITask extends AsyncTask<Void,Void,ArrayList<ProductSI>> {
 
                 RSFind.close();
             }
+            StatementRSFind.close();
         }catch(Exception ex)
         {
 

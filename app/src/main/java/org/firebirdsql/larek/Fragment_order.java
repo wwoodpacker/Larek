@@ -1,6 +1,9 @@
 package org.firebirdsql.larek;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +23,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.listeners.ActionClickListener;
+
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,7 +41,7 @@ import java.util.List;
  * Created by nazar.humeniuk on 17.06.17.
  */
 
-public class Fragment_order extends Fragment implements AsyncResponse{
+public class Fragment_order extends Fragment implements AsyncResponse,ConnectionReceiver.ConnectivityReceiverListener{
     public Button btnAddClient,btnCancel,btnOplata,btn_back;
     public ProgressBar progressBar;
     private List<View> allBtnSales;
@@ -51,6 +58,7 @@ public class Fragment_order extends Fragment implements AsyncResponse{
     public ArrayList<OrderItem> orderItems;
     public OrderAdapter orderAdapter;
     public static double totalPrice=0;
+    private DBhelperSqllite dBhelperSqllite;
     int kil=0;
     ScrollView sv;
     public static Fragment_order fragment_order;
@@ -77,19 +85,31 @@ public class Fragment_order extends Fragment implements AsyncResponse{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view=inflater.inflate(R.layout.fragment_order,container,false);
+        MenuActivity.readQuery();
+        dBhelperSqllite=new DBhelperSqllite(getContext());
         totalPrice=0;
-        orderItems=new ArrayList<>();
-        ProductSITask productSITask = new ProductSITask(getContext());
-        productSITask.delegate=this;
-        productSITask.execute();
-        ProductIITask productIITask = new ProductIITask(getContext());
-        productIITask.delegate=this;
-        productIITask.execute();
 
         progressBar=(ProgressBar)view.findViewById(R.id.process);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(true);
+        orderItems=new ArrayList<>();
+        if (checkConnection()){
+            layoutSalesItems = (LinearLayout)view.findViewById(R.id.layoutSalesItems);
+            ProductSITask productSITask = new ProductSITask(getContext());
+            productSITask.delegate=this;
+            productSITask.execute();
+            ProductIITask productIITask = new ProductIITask(getContext());
+            productIITask.delegate=this;
+            productIITask.execute();
 
+        }else {
+            readProductII();
+            readProductSI();
+            progressBar.setIndeterminate(false);
+            progressBar.setVisibility(View.INVISIBLE);
+            layoutSalesItems = (LinearLayout)view.findViewById(R.id.layoutSalesItems);
+            displayProducts(productsSI);
+        }
         isClient=getArguments().getBoolean("isClient");
         nameClient=getArguments().getString("clientName");
         clientOccupation=getArguments().getString("clientOccupation");
@@ -122,7 +142,7 @@ public class Fragment_order extends Fragment implements AsyncResponse{
         }
 
 
-        layoutSalesItems = (LinearLayout)view.findViewById(R.id.layoutSalesItems);
+
 
 
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -161,6 +181,7 @@ public class Fragment_order extends Fragment implements AsyncResponse{
         btnOplata.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (isClient){
                     Order order= new Order();
                     order.setEmpName(nameClient);
@@ -274,7 +295,7 @@ public String getSoldTime(){
     @Override
     public void processProductSI(ArrayList<ProductSI> output) {
             productsSI=output;
-
+            writeProductSI(output);
     }
 
     @Override
@@ -282,8 +303,139 @@ public String getSoldTime(){
         productsII=output;
         progressBar.setIndeterminate(false);
         progressBar.setVisibility(View.INVISIBLE);
+        writeProductII(productsII);
         displayProducts(productsSI);
     }
+    //Write read from/to local DB
+    public void writeProductSI(ArrayList<ProductSI> output){
+        SQLiteDatabase database = dBhelperSqllite.getWritableDatabase();
+        for (int i=0;i<output.size();i++) {
+            ContentValues cvSI = new ContentValues();
+            cvSI.put("ID", output.get(i).getId());
+            cvSI.put("NAME", output.get(i).getName());
+            cvSI.put("LAREK_PRODUCT_II",output.get(i).getProductII());
+            cvSI.put("COUNT_II", output.get(i).getCount());
+            database.insert("LAREK_PRODUCT_SI", null, cvSI);
+        }
+        database.close();
+    }
+        public void writeProductII(ArrayList<ProductII> output){
+            SQLiteDatabase database = dBhelperSqllite.getWritableDatabase();
+            for (int i=0;i<output.size();i++) {
+                ContentValues cvSI = new ContentValues();
+                cvSI.put("ID", output.get(i).getId());
+                cvSI.put("NAME", output.get(i).getName());
+                cvSI.put("LAREK_DEP",output.get(i).getLarekDep());
+                cvSI.put("PRICE", output.get(i).getPrice());
+                database.insert("LAREK_PRODUCT_II", null, cvSI);
+            }
+            database.close();
+        }
+    public void readProductSI(){
+        productsSI=new ArrayList<>();
+        try {
+            SQLiteDatabase db = dBhelperSqllite.getWritableDatabase();
+            String delSql="delete   from LAREK_PRODUCT_SI\n" +
+                    "where    rowid not in\n" +
+                    "         (\n" +
+                    "         select  min(rowid)\n" +
+                    "         from    LAREK_PRODUCT_SI\n" +
+                    "         group by\n" +
+                    "                 NAME\n" +
+                    "         ,       ID\n" +
+                    "         )";
+            Cursor c=db.rawQuery(delSql,null);
+            c.moveToFirst();
+            c.close();
+            String sSql="SELECT * FROM LAREK_PRODUCT_SI Join LAREK_PRODUCT_II ON LAREK_PRODUCT_SI.LAREK_PRODUCT_II=LAREK_PRODUCT_II.ID ";
+            Cursor cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                ProductSI productSI=new ProductSI();
+                productSI.setId(cursor.getInt(cursor.getColumnIndex("ID")));
+                productSI.setName(cursor.getString(cursor.getColumnIndex("NAME")));
+                productSI.setCount(cursor.getInt(cursor.getColumnIndex("COUNT_II")));
+                productSI.setProductII(cursor.getInt(cursor.getColumnIndex("LAREK_PRODUCT_II")));
+                productsSI.add(productSI);
+            }
+            cursor.close();
+        }catch (Exception e){
+            Log.e("Sqllite",e.getMessage());
+        }
+    }
+    public void readProductII(){
+        productsII=new ArrayList<>();
+        try {
+            SQLiteDatabase db = dBhelperSqllite.getWritableDatabase();
+            String delSql="delete   from LAREK_PRODUCT_II\n" +
+                    "where    rowid not in\n" +
+                    "         (\n" +
+                    "         select  min(rowid)\n" +
+                    "         from    LAREK_PRODUCT_II\n" +
+                    "         group by\n" +
+                    "                 NAME\n" +
+                    "         ,       ID\n" +
+                    "         )";
+            Cursor c=db.rawQuery(delSql,null);
+            c.moveToFirst();
+            c.close();
+            String sSql = "SELECT ID,NAME,LAREK_DEP,PRICE FROM LAREK_PRODUCT_II";
+            Cursor cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                ProductII productII=new ProductII();
+                productII.setId(cursor.getInt(cursor.getColumnIndex("ID")));
+                productII.setName(cursor.getString(cursor.getColumnIndex("NAME")));
+                productII.setLarekDep(cursor.getString(cursor.getColumnIndex("LAREK_DEP")));
+                productII.setPrice(cursor.getDouble(cursor.getColumnIndex("PRICE")));
+                productsII.add(productII);
+            }
+            cursor.close();
+        }catch (Exception e){
+            Log.e("Sqllite",e.getMessage());
+        }
+    }
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        showInternet(isConnected);
+    }
+    private boolean checkConnection() {
+        boolean isConnected = ConnectionReceiver.isConnected();
+        showInternet(isConnected);
+        Log.e("connetion",String.valueOf(isConnected));
+        return isConnected;
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        LarekApplication.getInstance().setConnectivityListener(this);
+    }
+    public void showInternet(boolean isConnected){
+        if (isConnected)
+            SnackbarManager.show(
+                    Snackbar.with(getContext()) // context
+                            .text("Онлайн режим") // text to display
+                            .actionLabel("Скрыть")
+                            .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)// action button label
+                            .actionListener(new ActionClickListener() {
+                                @Override
+                                public void onActionClicked(Snackbar snackbar) {
+                                    Toast.makeText(getContext(),"Перейдите в меню что-бы синхронизировать покупки!",Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                    , getActivity());
+        else
+            SnackbarManager.show(
+                    Snackbar.with(getContext()) // context
+                            .text("Оффлай режым") // text to display
+                            .actionLabel("Скрыть")
+                            .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
+                            .actionListener(new ActionClickListener() {
+                                @Override
+                                public void onActionClicked(Snackbar snackbar) {
+                                    MenuActivity.clearTheFile();
+                                }
+                            }) // action button's ActionClickListener
+                    ,getActivity());
+    }
 
 }

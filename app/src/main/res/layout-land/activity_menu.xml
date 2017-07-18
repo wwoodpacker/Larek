@@ -30,7 +30,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:text="Последний вход 18.09.17 21:18"
+            android:text="Нет данных для синхронизации"
+            android:id="@+id/sync_data"
             android:layout_marginRight="20dp"
             android:layout_alignParentEnd="true"
             />
