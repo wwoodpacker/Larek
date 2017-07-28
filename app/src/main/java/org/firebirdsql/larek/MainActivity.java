@@ -186,6 +186,7 @@ public class MainActivity extends Activity implements AsyncResponse,ConnectionRe
         mPad.setModel(Build.MODEL);
         mPad.setSerial(Build.SERIAL);
         mPad.setMac(macAddress);
+        //mPad.setMac("38:A4:ED:76:AC:65");
 
     }
     public static String getMacAddr() {

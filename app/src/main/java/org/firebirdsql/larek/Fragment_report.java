@@ -19,6 +19,7 @@ public class Fragment_report extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_report,container,false);
         Button btn_back=(Button)view.findViewById(R.id.btn_back);
+        Button btn_remains=(Button)view.findViewById(R.id.ostatkuNaSklade);
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -26,6 +27,15 @@ public class Fragment_report extends Fragment {
                 Fragment_menu fragmentMenu=new Fragment_menu();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frgmCont, fragmentMenu);
+                fragmentTransaction.commit();
+            }
+        });
+        btn_remains.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentRemains fragmentRemains=new FragmentRemains();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, fragmentRemains);
                 fragmentTransaction.commit();
             }
         });

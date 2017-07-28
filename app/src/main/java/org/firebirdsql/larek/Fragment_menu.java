@@ -78,18 +78,21 @@ public class Fragment_menu extends Fragment implements ConnectionReceiver.Connec
                 fragmentTransaction.commit();
             }
         });
-
-        btn_report.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment_report fragmentReport = new Fragment_report();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frgmCont, fragmentReport);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
+        if (checkConnection()) {
+            btn_report.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment_report fragmentReport = new Fragment_report();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frgmCont, fragmentReport);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+            });
+        }else {
+            Toast.makeText(getContext(),"Отчёты доступны в онлайн режиме!",Toast.LENGTH_SHORT).show();
+        }
         return view;
     }
 
