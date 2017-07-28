@@ -76,8 +76,10 @@ public class OrderAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Fragment_order.totalPrice-=orderItems.get(position).getSi_total();
+                GlobalVariables.getInstance().setTotalPrice(Fragment_order.totalPrice);
                 Fragment_order.showTotalPrice(Fragment_order.totalPrice);
                 orderItems.remove(position);
+                GlobalVariables.getInstance().getOrderItems().remove(position);
                 notifyDataSetChanged();
             }
         });

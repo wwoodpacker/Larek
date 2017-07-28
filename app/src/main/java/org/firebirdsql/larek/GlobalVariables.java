@@ -19,12 +19,38 @@ public class GlobalVariables {
     private String padName;
     private String larekDep;
     private ArrayList<String> querys;
+    private ArrayList<OrderItem> orderItems;
+    private double totalPrice;
+    public void resetOrder(){
+        if(this.orderItems==null){
+            this.orderItems= new ArrayList<>();
+        }
+        else
+            orderItems.clear();
+    }
+    public void setTotalPrice(double totalPrice) {
+
+        this.totalPrice = totalPrice;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
     public static synchronized GlobalVariables getInstance(){
         if(instance==null){
             instance=new GlobalVariables();
 
         }
         return instance;
+    }
+
+    public void setOrderItems(ArrayList<OrderItem> orderItems) {
+        this.orderItems=orderItems;
+    }
+
+    public ArrayList<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
     public void setLarekDep(String larekDep) {

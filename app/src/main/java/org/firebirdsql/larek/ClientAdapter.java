@@ -67,6 +67,7 @@ public class ClientAdapter extends BaseAdapter {
         RelativeLayout itemView = (RelativeLayout) mLayoutInflater.inflate(
                 R.layout.client_item, parent, false);
 
+        RelativeLayout relclient=(RelativeLayout)itemView.findViewById(R.id.relclient);
         TextView client_name= (TextView)itemView.findViewById(R.id.client_name);
         TextView client_occupation= (TextView)itemView.findViewById(R.id.client_occupation);
         ImageView btn_buy=(ImageView)itemView.findViewById(R.id.buy);
@@ -79,7 +80,7 @@ public class ClientAdapter extends BaseAdapter {
             btn_orders.setVisibility(View.INVISIBLE);
         }
         final Client mClient= this.clientsList.get(position);
-        final String name=mClient.getSurname()+" "+mClient.getName()+" "+mClient.getPatronimic();
+        final String name=mClient.getSurname()+" "+mClient.getName()+mClient.getPatronimic();
         final String occupation=mClient.getOccupation();
         final int empID=mClient.getID();
         if (mClient.getStatus()==0){
@@ -104,7 +105,7 @@ public class ClientAdapter extends BaseAdapter {
             }
         });
         if (!isFromMenu) {
-            client_name.setOnClickListener(new View.OnClickListener() {
+            relclient.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Fragment_order fragmentOrder = Fragment_order.newInstance(true,name,occupation,empID);

@@ -77,7 +77,7 @@ public class FragmentApplyOrder extends Fragment implements ConnectionReceiver.C
 
 
         textTotalPrice=(TextView)view.findViewById(R.id.textFullPrice);
-        textClientName.setText(order.getEmpName());
+        textClientName.setText(order.getEmpName().replace(" ","\n"));
         textClientOccupation.setText(order.getEmpOccupation());
         DecimalFormat df = new DecimalFormat("#.####");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -148,7 +148,7 @@ public class FragmentApplyOrder extends Fragment implements ConnectionReceiver.C
         else
             SnackbarManager.show(
                     Snackbar.with(getContext()) // context
-                            .text("Оффлай режым") // text to display
+                            .text("Оффлайн режим") // text to display
                             .actionLabel("Скрыть")
                             .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
                             .actionListener(new ActionClickListener() {

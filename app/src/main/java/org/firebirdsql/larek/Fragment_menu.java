@@ -49,6 +49,7 @@ public class Fragment_menu extends Fragment implements ConnectionReceiver.Connec
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu,
                 container, false);
+        GlobalVariables.getInstance().resetOrder();
         checkConnection();
         MenuActivity.readQuery();
         Button btn_client=(Button)view.findViewById(R.id.btn_client);
@@ -127,7 +128,7 @@ public class Fragment_menu extends Fragment implements ConnectionReceiver.Connec
         else
             SnackbarManager.show(
                     Snackbar.with(getContext()) // context
-                            .text("Оффлай режым") // text to display
+                            .text("Оффлайн режим") // text to display
                             .actionLabel("Скрыть")
                             .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
                             .actionListener(new ActionClickListener() {

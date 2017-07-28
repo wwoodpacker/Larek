@@ -219,7 +219,7 @@ public class Fragment_client extends Fragment implements AsyncResponse,Connectio
         else
             SnackbarManager.show(
                     Snackbar.with(getContext()) // context
-                            .text("Оффлай режым") // text to display
+                            .text("Оффлайн режим") // text to display
                             .actionLabel("Скрыть")
                             .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
                             .actionListener(new ActionClickListener() {

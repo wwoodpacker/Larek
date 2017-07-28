@@ -11,6 +11,7 @@
         android:id="@+id/order_item_text"
         android:textSize="20sp"
         android:text="Сигареты МАРК-1 10 шт 2$ 20$"
+        android:layout_toLeftOf="@+id/delete"
         />
     <ImageView
         android:layout_width="wrap_content"
@@ -22,6 +23,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorText"
-        android:layout_below="@id/buy"
+        android:layout_below="@+id/order_item_text"
         android:orientation="horizontal" />
 </RelativeLayout>

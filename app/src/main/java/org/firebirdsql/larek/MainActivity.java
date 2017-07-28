@@ -185,7 +185,7 @@ public class MainActivity extends Activity implements AsyncResponse,ConnectionRe
         Log.i("TAG","MAC: " + macAddress);
         mPad.setModel(Build.MODEL);
         mPad.setSerial(Build.SERIAL);
-        mPad.setMac("38:A4:ED:76:AC:65");
+        mPad.setMac(macAddress);
 
     }
     public static String getMacAddr() {
@@ -358,7 +358,7 @@ public class MainActivity extends Activity implements AsyncResponse,ConnectionRe
         else
             SnackbarManager.show(
                     Snackbar.with(getApplicationContext()) // context
-                            .text("Оффлай режым") // text to display
+                            .text("Оффлайн режим") // text to display
                             .actionLabel("Скрыть")
                             .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
                             .actionListener(new ActionClickListener() {

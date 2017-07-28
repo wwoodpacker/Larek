@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -52,6 +53,7 @@ public class Fragment_order extends Fragment implements AsyncResponse,Connection
     public int empID;
     public TextView textClientName;
     public TextView textClientOccupation;
+    public ImageView btnChangeClient;
     public static TextView textTotalPrice;
     public ArrayList<ProductSI> productsSI;
     public ArrayList<ProductII> productsII;
@@ -61,6 +63,7 @@ public class Fragment_order extends Fragment implements AsyncResponse,Connection
     private DBhelperSqllite dBhelperSqllite;
     int kil=0;
     ScrollView sv;
+    private ListView listView;
     public static Fragment_order fragment_order;
 
 
@@ -80,6 +83,7 @@ public class Fragment_order extends Fragment implements AsyncResponse,Connection
         super.onCreate(savedInstanceState);
 
     }
+
 
     @Nullable
     @Override
@@ -117,26 +121,50 @@ public class Fragment_order extends Fragment implements AsyncResponse,Connection
         //textviews
         textClientName=(TextView)view.findViewById(R.id.textClientName);
         textClientOccupation=(TextView)view.findViewById(R.id.textClientOccupation);
+        btnChangeClient=(ImageView)view.findViewById(R.id.btnChangeClient);
         textTotalPrice=(TextView)view.findViewById(R.id.textFullPrice);
 
-        ListView listView=(ListView)view.findViewById(R.id.listOrder);
+        listView=(ListView)view.findViewById(R.id.listOrder);
         orderAdapter = new OrderAdapter(getContext(),false);
         listView.setAdapter(orderAdapter);
+        if(!GlobalVariables.getInstance().getOrderItems().isEmpty()){
+            orderItems.addAll(GlobalVariables.getInstance().getOrderItems());
+            totalPrice=GlobalVariables.getInstance().getTotalPrice();
+            showTotalPrice(totalPrice);
+            for (int i=0;i<orderItems.size();i++){
+                orderAdapter.add(orderItems.get(i));
+                orderAdapter.notifyDataSetChanged();
+            }
 
+        }
         //buttons
         btn_back=(Button)view.findViewById(R.id.btn_back);
         btnAddClient=(Button)view.findViewById(R.id.btnAddClient);
         btnCancel=(Button)view.findViewById(R.id.btnCancel);
         btnOplata=(Button)view.findViewById(R.id.btnOplata);
         allBtnSales = new ArrayList<View>();
+
         if (isClient){
             btnAddClient.setVisibility(View.INVISIBLE);
             textClientOccupation.setVisibility(View.VISIBLE);
             textClientName.setVisibility(View.VISIBLE);
-            textClientName.setText(nameClient);
+            textClientName.setText(nameClient.replace(" ","\n"));
             textClientOccupation.setText(clientOccupation);
+            btnChangeClient.setVisibility(View.VISIBLE);
+            btnChangeClient.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment_client fragmentClient=Fragment_client.newInstance(false,"Выберите Клиента");
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frgmCont, fragmentClient);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+            });
         }else{
-           btnAddClient.setVisibility(View.VISIBLE);
+            btnAddClient.setVisibility(View.VISIBLE);
+            btnChangeClient.setVisibility(View.INVISIBLE);
             textClientName.setVisibility(View.INVISIBLE);
             textClientOccupation.setVisibility(View.INVISIBLE);
         }
@@ -158,6 +186,8 @@ public class Fragment_order extends Fragment implements AsyncResponse,Connection
         btnAddClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //GlobalVariables.getInstance().setOrderItems(orderItems);
+              //  GlobalVariables.getInstance().setTotalPrice(totalPrice);
                 Fragment_client fragmentClient=Fragment_client.newInstance(false,"Выберите Клиента");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -183,6 +213,8 @@ public class Fragment_order extends Fragment implements AsyncResponse,Connection
             public void onClick(View v) {
 
                 if (isClient){
+                   // GlobalVariables.getInstance().setOrderItems(orderItems);
+                   // GlobalVariables.getInstance().setTotalPrice(totalPrice);
                     Order order= new Order();
                     order.setEmpName(nameClient);
                     order.setEmpOccupation(clientOccupation);
@@ -224,7 +256,7 @@ public String getSoldTime(){
 }
     public void displayProducts(ArrayList<ProductSI> products){
         for (int i=0;i<products.size();i++) {
-            if (i % 3 != 0 && i != 0) {
+            if (i % 4 != 0 && i != 0) {
                 Button btnTag = new Button(getContext());
                 RelativeLayout.LayoutParams p= new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 btnTag.setLayoutParams(p);
@@ -275,10 +307,13 @@ public String getSoldTime(){
             orderItem.setIi_count(productsSI.get(pos).getCount());
             orderItem.setIi_price(price1);
             orderItem.setIi_total(price2);
+            //jjfh
             orderItems.add(orderItem);
             totalPrice+=price2;
             showTotalPrice(totalPrice);
             orderAdapter.add(orderItem);
+            GlobalVariables.getInstance().getOrderItems().add(orderItem);
+            GlobalVariables.getInstance().setTotalPrice(totalPrice);
             orderAdapter.notifyDataSetChanged();
         }
     };
@@ -426,7 +461,7 @@ public String getSoldTime(){
         else
             SnackbarManager.show(
                     Snackbar.with(getContext()) // context
-                            .text("Оффлай режым") // text to display
+                            .text("Оффлайн режим") // text to display
                             .actionLabel("Скрыть")
                             .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE)
                             .actionListener(new ActionClickListener() {

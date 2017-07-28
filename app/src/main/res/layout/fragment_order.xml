@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorText"
+            android:id="@+id/qq"
             android:textSize="@dimen/clientTextSize"
             android:text="Заказ"
             android:layout_centerHorizontal="true"
@@ -41,40 +42,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="Константинопольский\nКонстантин Константинович"
+            android:text="Константинопольский\nКонстантин\nКонстантинович"
             android:textColor="@color/colorText"
             android:textSize="30sp" />
 
         <TextView
             android:id="@+id/textClientOccupation"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textClientName"
             android:text="Электронавигатор"
             android:textColor="@color/colorText"
             android:textSize="30sp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/textClientName"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="40dp"
+            android:id="@+id/btnChangeClient"
+            android:src="@mipmap/icchangeclient"/>
 
         <Button
             android:id="@+id/btnAddClient"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Выберете клиента"
+            android:text="Выберите клиента"
             android:textColor="@color/colorBackground"
             android:textSize="30sp"
             android:visibility="invisible" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorText"
-            android:orientation="horizontal"
-            android:layout_below="@id/textClientOccupation"
-            android:layout_alignStart="@+id/textClientName"
-            android:layout_alignEnd="@+id/textClientName"
-            />
-    </RelativeLayout>
 
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorText"
+        android:orientation="horizontal"
+        android:layout_below="@id/layoutClient"
+        android:layout_toLeftOf="@+id/layoutSales"
+        />
     <RelativeLayout
         android:id="@+id/layoutSales"
         android:layout_below="@+id/toolBarfrag"
@@ -123,7 +132,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/layoutListOrder"
         android:layout_below="@+id/layoutClient"
-        android:layout_toLeftOf="@id/layoutSales">
+        android:layout_toLeftOf="@id/layoutSales"
+        android:layout_above="@+id/relprice"
+        >
 
         <ListView
             android:id="@+id/listOrder"
@@ -133,6 +144,7 @@
         </ListView>
         </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/relprice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
